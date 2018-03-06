@@ -1,6 +1,6 @@
 defmodule MyFitnessSnapChatMessage.MessageUtil do
   use Timex
-  @defaultSeconds +60
+  @defaultSeconds 60
 
   defmodule Messages do
     @derive [Poison.Encoder]
@@ -41,6 +41,7 @@ end
     %{username: message.username, timeout: get_EpochTime(message.timeout), text: message.text, id: message.id}
   end
 
+ #  schema validator
   def schema do
     %{
       "$schema" => "http://json-schema.org/draft-04/schema#",

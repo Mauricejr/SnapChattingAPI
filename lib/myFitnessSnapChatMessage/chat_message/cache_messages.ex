@@ -9,8 +9,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
         false ->
           Map.put(state, key, [value])
         _ ->
-          updateMap = state[key]
-          %{state | key => [value | updateMap]}
+          listofIds = state[key]
+          %{state | key => [value | listofIds]}
       end
     end)
   end

@@ -1,5 +1,5 @@
 defmodule MyFitnessSnapChatMessage.CacheSupervisor do
-alias MyFitnessSnapChatMessage.CacheMessages
+  alias MyFitnessSnapChatMessage.CacheMessages
   use Supervisor
 
   def start_link do
@@ -7,10 +7,10 @@ alias MyFitnessSnapChatMessage.CacheMessages
   end
 
   def init(:ok) do
-  #{ :ok, true } = Cachex.dump(:my_cache, "/lib/database_dump")
-  children = [
-    worker(CacheMessages, [])
-  ]
-supervise(children, strategy: :one_for_one)
-end
+    children = [
+      worker(CacheMessages, [])
+    ]
+    
+    supervise(children, strategy: :one_for_one)
+  end
 end
