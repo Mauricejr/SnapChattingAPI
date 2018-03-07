@@ -47,7 +47,8 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
         {:cachex, "~> 3.0"},
         {:ex_json_schema, "~> 0.5.4"},
         {:exactor, "~> 2.2.4", warn_missing: false},
-        {:distillery, "~> 1.0.0"}
+        {:distillery, "~> 1.0.0"},
+        {:libcluster, "~> 2.0.3"}
 
     ]
   end

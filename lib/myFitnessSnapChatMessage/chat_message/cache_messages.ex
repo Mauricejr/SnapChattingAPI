@@ -1,5 +1,4 @@
 defmodule MyFitnessSnapChatMessage.CacheMessages do
-
   @moduledoc """
   This module keeps username in map and  ids for a user in a list.
   example:
@@ -22,6 +21,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       case Map.has_key?(state, key) do
         false ->
           Map.put(state, key, [value])
+
         _ ->
           listofIds = state[key]
           %{state | key => [value | listofIds]}
@@ -29,14 +29,15 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
     end)
   end
 
-@doc """
- Use username(key) to get all ids for a user
-"""
+  @doc """
+   Use username(key) to get all ids for a user
+  """
   def get(key) do
     Agent.get(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
         nil ->
           {:error}
+
         _ ->
           if(state[key] == nil) do
             {:error}
@@ -46,14 +47,16 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
+
   @doc """
-  Remove Id for a given key(username)
-   """
+       Remove Id for a given key(username)
+  """
   def dropId(key, id_to_delete) do
     Agent.update(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
         false ->
           state
+
         _ ->
           ids_to_delete = state[key]
           update_keys = List.delete(ids_to_delete, id_to_delete)

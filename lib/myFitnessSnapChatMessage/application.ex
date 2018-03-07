@@ -8,18 +8,19 @@ defmodule MyFitnessSnapChatMessage.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+
     # Define workers and child supervisors to be supervised
     children = [
-     worker(UniqueGeneratorIDS,[]),
-     worker(Cachex, [:disk_message_cache, []]),
-     worker(MessageJasonValidator, [[]]),
-     worker(CacheMessageActions, [[]]),
+      worker(UniqueGeneratorIDS, []),
+      worker(Cachex, [:disk_message_cache, []]),
+      worker(MessageJasonValidator, [[]]),
+      worker(CacheMessageActions, [[]]),
       # Start the Ecto repository
-      #supervisor(MyFitnessSnapChatMessage.Repo, []),
+      # supervisor(MyFitnessSnapChatMessage.Repo, []),
       # Start the endpoint when the application starts
       supervisor(MyFitnessSnapChatMessageWeb.Endpoint, []),
       supervisor(MyFitnessSnapChatMessage.CacheSupervisor, []),
-      supervisor(ConCache, [[], [name: :message_cache]]),
+      supervisor(ConCache, [[], [name: :message_cache]])
       # Start your own worker by calling: FitnessPalCodingExercise.Worker.start_link(arg1, arg2, arg3)
       # worker(FitnessPalCodingExercise.Worker, [arg1, arg2, arg3]),
     ]
