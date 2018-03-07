@@ -1,12 +1,12 @@
 defmodule MyFitnessSnapChatMessage.CacheMessages do
 
   @moduledoc """
-  This module keeps username in map and  ids for the user in a list
+  This module keeps username in map and  ids for a user in a list.
   example:
   %{"username" =>[ids]}
   """
   @doc """
-  Start and link process
+  Start and link proccess
   """
   def start_link do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
