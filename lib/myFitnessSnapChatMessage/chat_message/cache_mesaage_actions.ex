@@ -1,18 +1,18 @@
 defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   alias MyFitnessSnapChatMessage.CacheMessages
   use AsyncWith
-  @path "./lib/database_dump/messages"
+  @path "./priv/database_dump/messages"
   require Logger
   use ExActor.GenServer
 
-  @interval 50000
+  @interval 5000
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def init(_) do
     Process.send_after(self(), {:dumpMessage}, @interval)
-  #  {:ok, true} = Cachex.load(:disk_message_cache, @path)
+    {:ok, true} = Cachex.load(:disk_message_cache, @path)
   {:ok, true}
   end
 
@@ -21,6 +21,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cache_disk_message(message) do
+    Logger.info("dumping data to disk")
     Cachex.put(:disk_message_cache, message.id, message)
   end
 
@@ -29,6 +30,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def reload_from_disk do
+      Logger.info("reloading data from disk")
     {:ok, true} = Cachex.load(:disk_message_cache, @path)
   end
 
@@ -71,7 +73,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def handle_info({:dumpMessage}, _state) do
-  #  dump_message_disk()
+    dump_message_disk()
     Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
   end
