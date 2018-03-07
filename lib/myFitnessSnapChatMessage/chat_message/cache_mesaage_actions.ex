@@ -48,7 +48,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cached_user_Ids(message) do
-    Logger.info("User" +message.username)
+    Logger.info("User")
+    Logger.info(message.username)
     CacheMessages.put(message.username, message.id)
   end
 
@@ -57,7 +58,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cache_message(message) do
-    Logger.info("UserId" +message.id)
+    Logger.info("UserId")
+    Logger.info( message.id)
     ConCache.put(:message_cache, message.id, message)
   end
 
