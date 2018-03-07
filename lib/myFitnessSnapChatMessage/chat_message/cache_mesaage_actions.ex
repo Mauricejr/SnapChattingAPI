@@ -12,7 +12,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
 
   def init(_) do
     Process.send_after(self(), {:dumpMessage}, @interval)
-    {:ok, true} = Cachex.load(:disk_message_cache, @path)
+    Cachex.load(:disk_message_cache, @path)
   {:ok, true}
   end
 
