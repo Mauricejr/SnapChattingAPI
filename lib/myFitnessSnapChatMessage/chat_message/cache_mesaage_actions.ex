@@ -12,7 +12,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
 
   def init(_) do
     Process.send_after(self(), {:dumpMessage}, @interval)
-    {:ok, true} = Cachex.load(:disk_message_cache, @path)
+  #  {:ok, true} = Cachex.load(:disk_message_cache, @path)
+  {:ok, true}
   end
 
   def get_cached_disk_message(key) do
@@ -70,7 +71,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def handle_info({:dumpMessage}, _state) do
-    dump_message_disk()
+  #  dump_message_disk()
     Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
   end

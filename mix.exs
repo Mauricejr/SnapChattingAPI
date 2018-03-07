@@ -19,7 +19,7 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
   def application do
     [
       mod: {MyFitnessSnapChatMessage.Application, []},
-      extra_applications: [:logger, :runtime_tools,:runtime_tools,:con_cache,:cachex]
+      extra_applications: [:logger, :runtime_tools,:runtime_tools,:con_cache,:cachex,:distillery]
     ]
   end
 
@@ -31,7 +31,7 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
-  
+
   defp deps do
     [
       {:phoenix, "~> 1.3.0"},
@@ -47,6 +47,7 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
         {:cachex, "~> 3.0"},
         {:ex_json_schema, "~> 0.5.4"},
         {:exactor, "~> 2.2.4", warn_missing: false},
+        {:distillery, "~> 1.0.0"}
 
     ]
   end

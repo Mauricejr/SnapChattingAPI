@@ -2,14 +2,28 @@ defmodule MyFitnessSnapChatMessage.MessageUtil do
   use Timex
   @defaultSeconds 60
 
+
+
+  @doc """
+
+
+  """
+
   defmodule Messages do
     @derive [Poison.Encoder]
     defstruct [:id, :username, :text, :timeout]
   end
 
   def convertTimeUTC(sencods_api \\ @defaultSeconds) do
-    IO.inspect(sencods_api)
-  DateTime.to_unix(Timex.shift(Timex.now, seconds: +sencods_api))
+    DateTime.to_unix(Timex.shift(Timex.now(), seconds: +sencods_api))
+  end
+
+  def currenTimeUTC do
+    DateTime.to_unix(Timex.shift(Timex.now(), seconds: +0))
+  end
+
+  def get_EpochTime(epochTinme) do
+    DateTime.from_unix!(epochTinme, :second) |> DateTime.to_naive() |> to_string()
   end
 
   def buildNewMessageMap(message) do
@@ -21,16 +35,12 @@ defmodule MyFitnessSnapChatMessage.MessageUtil do
     }
   end
 
-  def currenTimeUTC do
-    DateTime.to_unix(Timex.shift(Timex.now(), seconds: +0))
-  end
-
- def get_EpochTime(epochTinme)do
- DateTime.from_unix!(epochTinme, :second) |> DateTime.to_naive() |> to_string()
-end
-
   def buildNewMessageMap(:expired, message) do
-    %{username: message.username, text: message.text, expiration_date: get_EpochTime(message.timeout)}
+    %{
+      username: message.username,
+      text: message.text,
+      expiration_date: get_EpochTime(message.timeout)
+    }
   end
 
   def buildNewMessageMap(:unexpired, message) do
@@ -38,10 +48,15 @@ end
   end
 
   def getTime(message) do
-    %{username: message.username, timeout: get_EpochTime(message.timeout), text: message.text, id: message.id}
+    %{
+      username: message.username,
+      timeout: get_EpochTime(message.timeout),
+      text: message.text,
+      id: message.id
+    }
   end
 
- #  schema validator
+  #  schema validator
   def schema do
     %{
       "$schema" => "http://json-schema.org/draft-04/schema#",
@@ -59,7 +74,7 @@ end
             },
             "timeout" => %{
               "type" => "integer"
-            },
+            }
           }
         }
       }

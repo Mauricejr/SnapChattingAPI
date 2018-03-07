@@ -1,8 +1,22 @@
 defmodule MyFitnessSnapChatMessage.CacheMessages do
+
+  @moduledoc """
+  This module keeps username in map and  ids for the user in a list
+  example:
+  %{"username" =>[ids]}
+  """
+  @doc """
+  Start and link process
+  """
   def start_link do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
   end
 
+  @doc """
+  this method holds
+  store username and  or add new  id to existing user in a map
+  ## Parameters
+  """
   def put(key, value) do
     Agent.update(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
@@ -15,6 +29,9 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
     end)
   end
 
+@doc """
+ Use username(key) to get all ids for a user
+"""
   def get(key) do
     Agent.get(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
@@ -29,7 +46,9 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
-
+  @doc """
+  Remove Id for a given key(username)
+   """
   def dropId(key, id_to_delete) do
     Agent.update(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
