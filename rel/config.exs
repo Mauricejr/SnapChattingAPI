@@ -22,7 +22,9 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"W&u=S$}^CsP~wffbG=OqM_=)z9LPw<nUjz4F%nu%J7=i6NezU]W2s^4VudP%NyK["
+  #set cookie: :"W&u=S$}^CsP~wffbG=OqM_=)z9LPw<nUjz4F%nu%J7=i6NezU]W2s^4VudP%NyK["
+  set cookie: :"${MY_COOKIE}"
+  set vm_args: "rel/vm.args"
 end
 
 # You may define one or more releases in this file.
@@ -33,4 +35,3 @@ end
 release :myFitnessSnapChatMessage do
   set version: current_version(:myFitnessSnapChatMessage)
 end
-
