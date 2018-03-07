@@ -35,7 +35,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
   def get(key) do
     Agent.get(__MODULE__, fn state ->
       case Map.has_key?(state, key) do
-        nil ->
+        false ->
           {:error}
 
         _ ->
@@ -47,6 +47,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
+  
 
   @doc """
        Remove Id for a given key(username)
