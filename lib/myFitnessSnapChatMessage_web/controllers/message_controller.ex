@@ -3,23 +3,26 @@ defmodule MyFitnessSnapChatMessageWeb.MessageController do
   use AsyncWith
   plug(:validate_params when action in [:create])
   alias MyFitnessSnapChatMessage.MessageUtil
-  alias MyFitnessSnapChatMessage.UniqueGeneratorIDS
+  #alias MyFitnessSnapChatMessage.UniqueGeneratorIDS
   alias MyFitnessSnapChatMessage.CacheMessageActions
   alias MyFitnessSnapChatMessage.Util.MessageJasonValidator
   action_fallback(MyFitnessSnapChatMessageWeb.FallbackController)
 
   def create(conn, params) do
+    {:ok, id} = Snowflake.next_id()
     message_map =
       case Map.has_key?(params, "timeout") do
         true ->
           timestime = MessageUtil.convertTimeUTC(params["timeout"])
-          newMapWithId = Map.merge(params, %{"id" => UniqueGeneratorIDS.nextId()})
+          newMapWithId = Map.merge(params, %{"id" => id})
           MessageUtil.buildNewMessageMap(%{newMapWithId | "timeout" => timestime})
 
         false ->
+
           timestime = %{
             "timeout" => MessageUtil.convertTimeUTC(),
-            "id" => UniqueGeneratorIDS.nextId()
+            "id" => id
+            #UniqueGeneratorIDS.nextId()
           }
 
           MessageUtil.buildNewMessageMap(Map.merge(params, timestime))

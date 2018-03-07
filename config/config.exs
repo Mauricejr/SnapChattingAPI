@@ -6,6 +6,9 @@
 use Mix.Config
 
 config :tzdata, :autoupdate, :disabled
+config :snowflake,
+  nodes: ["127.0.0.1", :'nonode@nohost'],   # up to 1023 nodes
+  epoch: 1142974214000  # don't change after you decide what your epoch is
 # Configures the endpoint
 config :myFitnessSnapChatMessage, MyFitnessSnapChatMessageWeb.Endpoint,
   url: [host: "localhost"],

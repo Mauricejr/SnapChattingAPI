@@ -19,7 +19,7 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
   def application do
     [
       mod: {MyFitnessSnapChatMessage.Application, []},
-      extra_applications: [:logger, :runtime_tools,:runtime_tools,:con_cache,:cachex,:distillery]
+      extra_applications: [:logger, :runtime_tools,:runtime_tools,:con_cache,:cachex,:distillery,:snowflake]
     ]
   end
 
@@ -48,7 +48,8 @@ defmodule MyFitnessSnapChatMessage.Mixfile do
         {:ex_json_schema, "~> 0.5.4"},
         {:exactor, "~> 2.2.4", warn_missing: false},
         {:distillery, "~> 1.0.0"},
-        {:libcluster, "~> 2.0.3"}
+        {:libcluster, "~> 2.0.3"},
+        {:snowflake, "~> 1.0.0"}
 
     ]
   end
