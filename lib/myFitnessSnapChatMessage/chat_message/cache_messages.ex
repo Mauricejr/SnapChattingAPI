@@ -29,6 +29,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
     end)
   end
 
+
+
   @doc """
    Use username(key) to get all ids for a user
   """
@@ -47,7 +49,11 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
-  
+
+  def getAllUserIds do
+    Agent.get(__MODULE__, fn state -> state end)
+  end
+
 
   @doc """
        Remove Id for a given key(username)

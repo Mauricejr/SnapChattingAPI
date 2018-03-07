@@ -5,13 +5,13 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   require Logger
   use ExActor.GenServer
 
-  @interval 5000
+  #@interval 5000
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def init(_) do
-    Process.send_after(self(), {:dumpMessage}, @interval)
+  #  Process.send_after(self(), {:dumpMessage}, @interval)
     Cachex.load(:disk_message_cache, @path)
   {:ok, true}
   end
@@ -38,11 +38,17 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
     CacheMessages.get(name)
   end
 
+  # def get_cachedAlluserIds do
+  #   CacheMessages.getAllUserIds
+  # end
+
+
   def delete_cached_user_Id(key, id) do
     CacheMessages.dropId(key, id)
   end
 
   def cached_user_Ids(message) do
+    Logger.info("User" +message.username)
     CacheMessages.put(message.username, message.id)
   end
 
@@ -51,6 +57,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cache_message(message) do
+    Logger.info("UserId" +message.id)
     ConCache.put(:message_cache, message.id, message)
   end
 
@@ -73,13 +80,13 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def handle_info({:dumpMessage}, _state) do
-    dump_message_disk()
-    Process.send_after(self(), {:dumpMessage}, @interval)
+  #  dump_message_disk()
+  #  Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
   end
 
   def stop(:norma) do
   #  "dumping cached messages into disk"
-    dump_message_disk()
+    #dump_message_disk()
   end
 end
