@@ -8,13 +8,13 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   This module has methods to interact with in-memory cache and disk back cache
   """
 
-  @interval 50000
+  #@interval 50000
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def init(_) do
-    Process.send_after(self(), {:dumpMessage}, @interval)
+  #  Process.send_after(self(), {:dumpMessage}, @interval)
     Cachex.load(:disk_message_cache, @path)
     {:ok, true}
   end
@@ -82,8 +82,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   def handle_info({:dumpMessage}, _state) do
     # periodically dumping messages to disk
      #@interval store intervals in milliseconds in which messages are written to disk
-    dump_message_disk()
-    Process.send_after(self(), {:dumpMessage}, @interval)
+  #  dump_message_disk()
+  #  Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
   end
 
