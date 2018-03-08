@@ -1,15 +1,16 @@
 defmodule MyFitnessSnapChatMessageWeb.MessageController do
   use MyFitnessSnapChatMessageWeb, :controller
-  use AsyncWith
   plug(:validate_params when action in [:create])
   alias MyFitnessSnapChatMessage.MessageUtil
-  #alias MyFitnessSnapChatMessage.UniqueGeneratorIDS
   alias MyFitnessSnapChatMessage.CacheMessageActions
   alias MyFitnessSnapChatMessage.Util.MessageJasonValidator
   action_fallback(MyFitnessSnapChatMessageWeb.FallbackController)
 
   def create(conn, params) do
+    # generate unique Id
     {:ok, id} = Snowflake.next_id()
+
+    # check if incomming request has timeout field
     message_map =
       case Map.has_key?(params, "timeout") do
         true ->
@@ -18,16 +19,16 @@ defmodule MyFitnessSnapChatMessageWeb.MessageController do
           MessageUtil.buildNewMessageMap(%{newMapWithId | "timeout" => timestime})
 
         false ->
-
+          # adds timeout field
           timestime = %{
             "timeout" => MessageUtil.convertTimeUTC(),
             "id" => id
-            #UniqueGeneratorIDS.nextId()
           }
 
           MessageUtil.buildNewMessageMap(Map.merge(params, timestime))
       end
 
+    # asynchronous caching message and userid iin n-immmory
     Task.async(fn -> CacheMessageActions.cache_message(message_map) end)
     Task.async(fn -> CacheMessageActions.cached_user_Ids(message_map) end)
 
@@ -38,8 +39,7 @@ defmodule MyFitnessSnapChatMessageWeb.MessageController do
 
   def show(conn, %{"id" => id}) do
     {parsedId, _} = Integer.parse(id)
-
-    # get message from in-memory or cold disk
+    # get messages from in-memory or cold disk
     message =
       case CacheMessageActions.get_cached_message(parsedId) do
         false ->
@@ -64,27 +64,30 @@ defmodule MyFitnessSnapChatMessageWeb.MessageController do
   def username(conn, %{"username" => username}) do
     cached_msgs =
       with {:ok, cached_userIds} <- CacheMessageActions.get_cached_user_Ids(username) do
-          Stream.map(cached_userIds, fn id ->
-            cached_message =
-              Task.async(fn ->
-                CacheMessageActions.get_cached_message(id)
-              end)
+        Stream.map(cached_userIds, fn id ->
+          cached_message =
+            Task.async(fn ->
+              CacheMessageActions.get_cached_message(id)
+            end)
 
-            Task.await(cached_message)
-          end)
-          |> Stream.filter(fn messsage ->
-            messsage != false
-          end)
+          Task.await(cached_message)
+        end)
+        |> Stream.filter(fn messsage ->
+          messsage != false
+        end)
       else
         {:error} -> %{}
       end
 
+    # build unexpired message
     unExpired_messages =
       cached_msgs
       |> Enum.map(fn message ->
         MessageUtil.buildNewMessageMap(:unexpired, message)
       end)
 
+    # delete expires messages from in-memory cached and store in cold
+    #storage(write to dsik)
     filterExpiredMessages(cached_msgs)
     |> CacheMessageActions.deleteCachedExpiredMessages()
 
@@ -96,18 +99,14 @@ defmodule MyFitnessSnapChatMessageWeb.MessageController do
     end
   end
 
+  # filter out expiring messages
   defp filterExpiredMessages(expiredcachedMessages) do
     Stream.filter(expiredcachedMessages, fn message ->
       message.timeout < MessageUtil.currenTimeUTC()
     end)
   end
 
-  # defp filterUnEpireMessages(unExpiredcachedMessages) do
-  #   Stream.filter(unExpiredcachedMessages, fn message ->
-  #     message.timeout > MessageUtil.currenTimeUTC()
-  #   end)
-  # end
-
+  # validate Json
   defp validate_params(conn, _params) do
     case MessageJasonValidator.validate(conn.params) do
       [] ->

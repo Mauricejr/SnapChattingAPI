@@ -1,18 +1,9 @@
 defmodule MyFitnessSnapChatMessage.MessageUtil do
   use Timex
   @defaultSeconds 60
-
-
-
-  @doc """
-
-
+  @moduledoc """
+   This util module has methods to converts map to json for returns endpoints
   """
-
-  defmodule Messages do
-    @derive [Poison.Encoder]
-    defstruct [:id, :username, :text, :timeout]
-  end
 
   def convertTimeUTC(sencods_api \\ @defaultSeconds) do
     DateTime.to_unix(Timex.shift(Timex.now(), seconds: +sencods_api))

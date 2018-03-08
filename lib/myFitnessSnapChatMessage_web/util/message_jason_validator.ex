@@ -2,11 +2,15 @@ defmodule MyFitnessSnapChatMessage.Util.MessageJasonValidator do
   use GenServer
   alias MyFitnessSnapChatMessage.MessageUtil
 
+  @moduledoc """
+  This module handles json validation
+  """
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def init(_) do
+    # build validator schema
     schema = MessageUtil.schema()
     {:ok, schema}
   end
@@ -15,6 +19,7 @@ defmodule MyFitnessSnapChatMessage.Util.MessageJasonValidator do
     validatScehema = schema.schema["text_message"]["definitions"]
 
     result =
+      #validate Json
       case ExJsonSchema.Validator.validate(validatScehema, request_params) do
         :ok -> []
         {:error, errors} -> {:error, errors_to_json(errors)}

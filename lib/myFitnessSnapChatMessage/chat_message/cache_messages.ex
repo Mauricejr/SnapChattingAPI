@@ -1,6 +1,6 @@
 defmodule MyFitnessSnapChatMessage.CacheMessages do
   @moduledoc """
-  This module keeps username in map and  ids for a user in a list.
+  This module keeps username and ids in map using Agent
   example:
   %{"username" =>[ids]}
   """
@@ -12,7 +12,6 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
   end
 
   @doc """
-  this method holds
   store username and  or add new  id to existing user in a map
   ## Parameters
   """
@@ -28,8 +27,6 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
-
-
 
   @doc """
    Use username(key) to get all ids for a user
@@ -49,11 +46,6 @@ defmodule MyFitnessSnapChatMessage.CacheMessages do
       end
     end)
   end
-
-  def getAllUserIds do
-    Agent.get(__MODULE__, fn state -> state end)
-  end
-
 
   @doc """
        Remove Id for a given key(username)

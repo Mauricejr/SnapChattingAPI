@@ -1,19 +1,22 @@
 defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   alias MyFitnessSnapChatMessage.CacheMessages
-  use AsyncWith
   @path "./priv/database_dump/messages"
   require Logger
   use ExActor.GenServer
 
-  #@interval 5000
+  @moduledoc """
+  This module has methods to interact with in-memory cache and disk back cache
+  """
+
+  @interval 50000
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
   def init(_) do
-  #  Process.send_after(self(), {:dumpMessage}, @interval)
+    Process.send_after(self(), {:dumpMessage}, @interval)
     Cachex.load(:disk_message_cache, @path)
-  {:ok, true}
+    {:ok, true}
   end
 
   def get_cached_disk_message(key) do
@@ -21,16 +24,16 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cache_disk_message(message) do
-    Logger.info("dumping data to disk")
     Cachex.put(:disk_message_cache, message.id, message)
   end
 
   def dump_message_disk do
+    Logger.info("dumping messages to disk")
     {:ok, true} = Cachex.dump(:disk_message_cache, @path)
   end
 
   def reload_from_disk do
-      Logger.info("reloading data from disk")
+    Logger.info("reloading data from disk")
     {:ok, true} = Cachex.load(:disk_message_cache, @path)
   end
 
@@ -38,18 +41,12 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
     CacheMessages.get(name)
   end
 
-  # def get_cachedAlluserIds do
-  #   CacheMessages.getAllUserIds
-  # end
-
-
   def delete_cached_user_Id(key, id) do
     CacheMessages.dropId(key, id)
   end
 
   def cached_user_Ids(message) do
-    Logger.info("User")
-    Logger.info(message.username)
+    Logger.info("User: #{message.username}")
     CacheMessages.put(message.username, message.id)
   end
 
@@ -58,8 +55,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def cache_message(message) do
-    Logger.info("UserId")
-    Logger.info( message.id)
+    Logger.info("UserId: #{message.id}")
     ConCache.put(:message_cache, message.id, message)
   end
 
@@ -73,6 +69,8 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
     end
   end
 
+  # deletes message from in-memory and  also Id in cache
+  # and write to cold storage
   def deleteCachedExpiredMessages(filteredexpiredMessages) do
     Enum.each(filteredexpiredMessages, fn expiredMessage ->
       Task.async(fn -> delete_cached_id(expiredMessage.id) end)
@@ -82,13 +80,15 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
   end
 
   def handle_info({:dumpMessage}, _state) do
-  #  dump_message_disk()
-  #  Process.send_after(self(), {:dumpMessage}, @interval)
+    # periodically dumping messages to disk
+    # @interval store intervals in milliseconds in which messages are written to disk
+    dump_message_disk()
+    Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
   end
 
   def stop(:norma) do
-  #  "dumping cached messages into disk"
-    #dump_message_disk()
+    #  "dumping cached messages to disk"
+    dump_message_disk()
   end
 end
