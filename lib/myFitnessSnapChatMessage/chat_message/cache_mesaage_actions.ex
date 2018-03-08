@@ -81,7 +81,7 @@ defmodule MyFitnessSnapChatMessage.CacheMessageActions do
 
   def handle_info({:dumpMessage}, _state) do
     # periodically dumping messages to disk
-     @interval store intervals in milliseconds in which messages are written to disk
+     #@interval store intervals in milliseconds in which messages are written to disk
     dump_message_disk()
     Process.send_after(self(), {:dumpMessage}, @interval)
     {:noreply, true}
